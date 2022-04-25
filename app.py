@@ -20,7 +20,7 @@ if uploaded_file is not None:
     charts.lines(daily_stats.reset_index())
     
     cumulative_stats = pd.DataFrame()
-    cumulative_stats["users"] = daily_stats["registrations"].cumsum()
+    cumulative_stats["users"] = daily_stats["registrazioni"].cumsum()
     cumulative_stats["logins"] = daily_stats["logins"].cumsum()
     
     st.header("Cumulative Stats")
