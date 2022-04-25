@@ -10,11 +10,13 @@ if uploaded_file is not None:
     sessions_per_user = df.groupby("user_id").count()["session_id"]
     registrations = df.loc[::-1].drop_duplicates(subset=["user_id"], keep="first")
 
+    freq = st.selectbox("Data frequency", ['1D', '3D', '1W', '1M'])
+
     daily_stats = pd.DataFrame()
-    daily_stats["logins"] = df.groupby(pd.Grouper(key = 'login_date', freq='1D'))["session_id"].count()
-    daily_stats["users"] = df.groupby(pd.Grouper(key = 'login_date', freq='1D'))["user_id"].nunique()
-    daily_stats["registrations"] = registrations.groupby(pd.Grouper(key = 'login_date', freq='1D')).count()["user_id"]
-    st.header("Daily Stats")
+    daily_stats["logins"] = df.groupby(pd.Grouper(key = 'login_date', freq=freq))["session_id"].count()
+    daily_stats["users"] = df.groupby(pd.Grouper(key = 'login_date', freq=freq))["user_id"].nunique()
+    daily_stats["registrations"] = registrations.groupby(pd.Grouper(key = 'login_date', freq=freq)).count()["user_id"]
+    st.header(f"{freq} Stats")
     charts.lines(daily_stats.reset_index())
     
     cumulative_stats = pd.DataFrame()
