@@ -11,6 +11,12 @@ if uploaded_file is not None:
     events["login_date"] = pd.to_datetime(
         events["login_date"], format="%d/%m/%Y %H:%M:%S"
     )
+    registrations = (
+        events.drop_duplicates(subset=["user_id"], keep="first")
+        .rename(columns={"login_date": "registration_date"})
+        .drop(columns=["session_id"])
+        .reset_index(drop=True)
+    )
 
     freqency = st.selectbox(
         "Frequenza dati",
@@ -36,15 +42,16 @@ if uploaded_file is not None:
     )["value"]
 
     period = st.date_input(
-        "Periodo",
+        "Periodo di registrazione",
         value=[events["login_date"].min(), events["login_date"].max()],
         min_value=events["login_date"].min(),
         max_value=events["login_date"].max(),
     )
-    events = events.loc[
-        (events["login_date"] >= pd.Timestamp(period[0]))
-        & (events["login_date"] <= pd.Timestamp(period[1]))
+    registrations = registrations.loc[
+        (registrations["registration_date"] >= pd.Timestamp(period[0]))
+        & (registrations["registration_date"] <= pd.Timestamp(period[1]))
     ]
+    events = events.loc[events["user_id"].isin(registrations["user_id"])]
 
     sessions_per_user = (
         events.groupby("user_id")
