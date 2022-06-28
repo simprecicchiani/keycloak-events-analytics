@@ -6,7 +6,7 @@ import charts
 uploaded_file = st.file_uploader("Upload file eventi keycloak", type=["csv"])
 if uploaded_file is not None:
     events = pd.read_csv(
-        "keycloack-events.csv", usecols=["email", "login_date", "user_id", "session_id"]
+        uploaded_file, usecols=["email", "login_date", "user_id", "session_id"]
     ).iloc[::-1]
     events["login_date"] = pd.to_datetime(
         events["login_date"], format="%d/%m/%Y %H:%M:%S"
